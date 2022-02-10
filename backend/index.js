@@ -1,22 +1,23 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const bodyParser = require('body-parser');
 const port = 3000;
 
 app.use(express.json());
 app.use(cors());
+app.use(bodyParser.json());
 
 let mails = [];
-let ref = 0;
 
 
 app.get('/api/mails', (req, res) => {
   res.json(mails)
 })
 
-app.get('/api/mails/:ref',( req, res) => {
-    const refParam = req.params.ref;
-    const mailSelect = mails.filter(mai => mai.ref === Number(refParam));
+app.get('/api/mails/:reference',( req, res) => {
+    const refParam = req.params.reference;
+    const mailSelect = mails.filter(mai => mai.reference === Number(refParam));
     return res.json(mailSelect);
     
 })
@@ -26,13 +27,13 @@ app.post('/api/mails', (req, res) => {
         from: req.body.from,
         to: req.body.to,
         message: req.body.message,
-        reference: ref++,
+        reference: req.body.reference,
     }
-    // if (req.body.ref === res.body.ref) return res.sendStatus(400);
-
-    mails.push(mail);
-    res.send("Done")
+    if (mails.find(mai => mai.reference === req.body.reference)) return res.sendStatus(400);
     
+    else {mails.push(mail)
+    return res.send("Done")}
+   
   })
 
 app.listen(port, () => {
