@@ -1,0 +1,23 @@
+{
+  "name": "post-office-react-kacagohollo",
+  "version": "1.0.0",
+  "description": "The bureaucracy is always a pain in the back.\r But without it, the life should be too fast and easy.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodecoolGlobal/post-office-react-KacagoHollo.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CodecoolGlobal/post-office-react-KacagoHollo/issues"
+  },
+  "homepage": "https://github.com/CodecoolGlobal/post-office-react-KacagoHollo#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.2"
+  }
+}
