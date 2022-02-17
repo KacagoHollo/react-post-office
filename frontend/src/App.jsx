@@ -15,6 +15,8 @@ function App() {
   const [message, setMessage] = useState("")
   const [reference, setRef] = useState("")
 
+  const [searchInp, setSearchInp] = useState("")
+
   const loadList = async () => {
     const response = await http.get('http://localhost:3000/api/mails')
     setList(response.data)
@@ -24,7 +26,7 @@ function App() {
     loadList()
   }, [])
 
-  const createMail = async () => {
+  const createFunc = async () => {
     await http.post('http://localhost:3000/api/mails', {
       from: from,
       to: to,
@@ -32,7 +34,23 @@ function App() {
       reference: reference,
     })
     loadList();
+    setFrom("")
+    setTo("")
+    setMessage("")
+    setRef("")
   };
+
+  const searchFunc = async () => {
+
+    try {
+      const response = await http.get(`http://localhost:3000/api/mails${searchInp}`)
+  
+      setSearchMails(response.data)
+      
+    } catch (error) {
+      console.log('error');
+    }
+  }
 
   return (
     <div className="App">
@@ -42,8 +60,8 @@ function App() {
         <button onClick={() => setSearchMails(!searchMails)}>Search</button>
       </div>
       {searchMails ? <div className='search-mail'>
-        <input type="search" placeholder='Search' />
-        <button >Browse</button>
+        <input type="search" value={searchInp} placeholder='Only number!' onChange={(e) => setSearchInp(e.target.value)} />
+        <button onClick={searchFunc}>Browse</button>
       </div> : ""
       }
       <div className='all-mails'>
@@ -62,7 +80,7 @@ function App() {
         <input type="text" placeholder="To" value={to} onChange={(e) => setTo(e.target.value)}></input>
         <textarea type="text" placeholder="Message" value={message} onChange={(e) => setMessage(e.target.value)}></textarea>
         <input type="number" placeholder="Reference" value={reference} onChange={(e) => setRef(e.target.value)}></input>
-        <button onClick={() => createMail()}>Send</button>
+        <button onClick={() => createFunc()}>Send</button>
       </div> : ""
       }
       

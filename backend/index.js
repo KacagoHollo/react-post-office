@@ -18,23 +18,24 @@ app.get('/api/mails', (req, res) => {
 
 app.get('/api/mails/:reference',( req, res) => {
     const refParam = req.params.reference;
-    const mailSelect = mails.filter(mai => mai.reference === Number(refParam));
-    return res.json(mailSelect);
-    
+    const mailSelect = mails.find(mai => mai.reference === Number(refParam));
+    if (!mailSelect) return res.sendStatus(404);
+
+    res.json(mailSelect);
 })
 
 app.post('/api/mails', (req, res) => {
   if (mails.find(mai => mai.reference === req.body.reference)) return res.sendStatus(400);
   
-    mails.push({
-      from: req.body.from,
-      to: req.body.to,
-      message: req.body.message,
-      reference: req.body.reference,
+  mails.push({
+    from: req.body.from,
+    to: req.body.to,
+    message: req.body.message,
+    reference: req.body.reference,
   })
   fs.writeFileSync("./data/mails.json", JSON.stringify(mails, null, 2))
     
-    res.sendStatus(204)
+  res.sendStatus(204)
    
   })
 
