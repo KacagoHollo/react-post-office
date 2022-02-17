@@ -1,14 +1,15 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const fs = require('fs')
 const bodyParser = require('body-parser');
 const port = 3000;
+const mails = require('./data/mails.json');
 
 app.use(express.json());
 app.use(cors());
 app.use(bodyParser.json());
 
-let mails = [];
 
 
 app.get('/api/mails', (req, res) => {
@@ -23,16 +24,17 @@ app.get('/api/mails/:reference',( req, res) => {
 })
 
 app.post('/api/mails', (req, res) => {
-    const mail = {
-        from: req.body.from,
-        to: req.body.to,
-        message: req.body.message,
-        reference: req.body.reference,
-    }
-    if (mails.find(mai => mai.reference === req.body.reference)) return res.sendStatus(400);
+  if (mails.find(mai => mai.reference === req.body.reference)) return res.sendStatus(400);
+  
+    mails.push({
+      from: req.body.from,
+      to: req.body.to,
+      message: req.body.message,
+      reference: req.body.reference,
+  })
+  fs.writeFileSync("./data/mails.json", JSON.stringify(mails, null, 2))
     
-    else {mails.push(mail)
-    return res.send("Done")}
+    res.sendStatus(204)
    
   })
 
