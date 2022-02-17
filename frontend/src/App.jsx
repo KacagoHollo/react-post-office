@@ -5,15 +5,24 @@ import http from 'axios';
 
 function App() {
   const [list, setList] = useState([])
+  
+  const [allMails, setAllMails] = useState(false)
+  const [createMails, setCreateMails] = useState(false)
+  const [searchMails, setSearchMails] = useState(false)
+
   const [from, setFrom] = useState("")
   const [to, setTo] = useState("")
   const [message, setMessage] = useState("")
-  const [reference, setRef] = useState(0)
+  const [reference, setRef] = useState("")
 
   const loadList = async () => {
     const response = await http.get('http://localhost:3000/api/mails')
     setList(response.data)
   }
+
+  useEffect(() => {
+    loadList()
+  }, [])
 
   const createMail = async () => {
     await http.post('http://localhost:3000/api/mails', {
@@ -27,21 +36,36 @@ function App() {
 
   return (
     <div className="App">
-      <button onClick={() => loadList()}>List mails</button>
-        {list.map(mail => (
-          <div key={mail.reference}>
-            <h3>{mail.from}</h3>
-            <h3>{mail.to}</h3>
-            <p>{mail.message}</p>
-            <h2>{mail.reference}</h2>
+      <div className='main-buttons'>
+        <button onClick={() => setAllMails(!allMails)}>List mails</button>
+        <button onClick={() => setCreateMails(!createMails)}>New mail</button>
+        <button onClick={() => setSearchMails(!searchMails)}>Search</button>
+      </div>
+      {searchMails ? <div className='search-mail'>
+        <input type="search" placeholder='Search' />
+        <button >Browse</button>
+      </div> : ""
+      }
+      <div className='all-mails'>
+        {allMails ? list.map(mail => (
+          <div className='list-mails' key={mail.reference}>
+            <li>From: {mail.from}</li>
+            <li>To: {mail.to}</li>
+            <li>Message: {mail.message}</li>
+            <li>Reference number: {mail.reference}</li>
           </div> 
-        ))}
-      <button onClick={() => createMail()}>New mail</button>
-      <input type="text" placeholder="From" value={from} onChange={(e) => setFrom(e.target.value)}></input>
-      <input type="text" placeholder="To" value={to} onChange={(e) => setTo(e.target.value)}></input>
-      <textarea type="text" placeholder="Message" value={message} onChange={(e) => setMessage(e.target.value)}></textarea>
-      <input type="number" placeholder="Reference" value={reference} onChange={(e) => setRef(e.target.value)}></input>
-      <button>Search</button>
+        )) : ""
+      }
+      </div>
+      {createMails ? <div className="input-form">
+        <input type="text" placeholder="From" value={from} onChange={(e) => setFrom(e.target.value)}></input>
+        <input type="text" placeholder="To" value={to} onChange={(e) => setTo(e.target.value)}></input>
+        <textarea type="text" placeholder="Message" value={message} onChange={(e) => setMessage(e.target.value)}></textarea>
+        <input type="number" placeholder="Reference" value={reference} onChange={(e) => setRef(e.target.value)}></input>
+        <button onClick={() => createMail()}>Send</button>
+      </div> : ""
+      }
+      
     </div>
   );
 }
